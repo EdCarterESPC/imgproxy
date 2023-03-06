@@ -185,6 +185,10 @@ var (
 	BufferPoolCalibrationThreshold int
 
 	HealthCheckPath string
+
+	// EC 20230306 DAM configuration - endpoint and toggle on/off
+	DAMEnabled  bool
+	DAMEndpoint string
 )
 
 var (
@@ -368,6 +372,11 @@ func Reset() {
 	BufferPoolCalibrationThreshold = 1024
 
 	HealthCheckPath = ""
+
+	// EC 20230306 DAM default values - turned off, no server
+	DAMEnabled = false
+	DAMEndpoint = ""
+
 }
 
 func Configure() error {
@@ -433,6 +442,10 @@ func Configure() error {
 	configurators.Bool(&EnableClientHints, "IMGPROXY_ENABLE_CLIENT_HINTS")
 
 	configurators.String(&HealthCheckPath, "IMGPROXY_HEALTH_CHECK_PATH")
+
+	// EC 20230306 DAM Setup from environment
+	configurators.Bool(&DAMEnabled, "IMGPROXY_USE_DAM")
+	configurators.String(&DAMEndpoint, "IMGPROXY_DAM_ENDPOINT")
 
 	if err := configurators.ImageTypes(&PreferredFormats, "IMGPROXY_PREFERRED_FORMATS"); err != nil {
 		return err

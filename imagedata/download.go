@@ -14,6 +14,7 @@ import (
 	"github.com/imgproxy/imgproxy/v3/security"
 
 	azureTransport "github.com/imgproxy/imgproxy/v3/transport/azure"
+	damTransport "github.com/imgproxy/imgproxy/v3/transport/dam"
 	fsTransport "github.com/imgproxy/imgproxy/v3/transport/fs"
 	gcsTransport "github.com/imgproxy/imgproxy/v3/transport/gcs"
 	s3Transport "github.com/imgproxy/imgproxy/v3/transport/s3"
@@ -112,6 +113,14 @@ func initDownloading() error {
 		}
 	}
 
+	// EX 20230306 - add in DAM if enabled.
+	if config.DAMEnabled {
+		if t, err := damTransport.New(); err != nil {
+			return err
+		} else {
+			registerProtocol("dam", t)
+		}
+	}
 	downloadClient = &http.Client{
 		Timeout:   time.Duration(config.DownloadTimeout) * time.Second,
 		Transport: transport,
