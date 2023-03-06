@@ -1,0 +1,21 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: imgproxy-ingress
+spec:
+  ingressClassName: nginx
+  tls:
+    - hosts:
+        - k8s-images.espc.com
+      secretName: espc-secret
+  rules:
+    - host: k8s-images.espc.com
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: imgproxy
+                port:
+                  number: 80

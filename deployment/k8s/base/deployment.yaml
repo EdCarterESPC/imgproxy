@@ -1,0 +1,31 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: imgproxy
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: imgproxy
+  template:
+    metadata:
+      labels:
+        app: imgproxy
+    spec:
+      imagePullSecrets:
+        - name: npm.espc.com.creds
+      containers:
+        - name: app
+          image: npm.espc.com/spk/dam/imgproxy:$TAG
+          ports:
+            - containerPort: 8080
+          envFrom:
+            - configMapRef:
+                name: imgproxy-env
+        - name: proxy
+          image: flaviostutz/nginx-cache-proxy
+          ports:
+            - containerPort: 80
+          envFrom:
+            - configMapRef:
+                name: imgproxy-env
